@@ -1,0 +1,142 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include "strlista.h"
+#include "ylista.h"
+
+void _strtulosta(strlista* l) {
+  _ytulosta(l, "%s\n");
+}
+
+void _strtulosta_valein(strlista* l) {
+  printf("%s",l->str);
+  _ytulosta(l->seur, " %s");
+  puts("");
+}
+
+void _strftulosta(FILE *f, strlista* l) {
+  _yftulosta(f, l, "%s\n");
+}
+
+void _strftulosta_valein(FILE *f, strlista* l) {
+  fprintf(f, "%s",l->str);
+  _yftulosta(f, l->seur, " %s");
+  fputc('\n', f);
+}
+
+char _strstulostaf(char* s, char* muoto, strlista* l) {
+  while(l) {
+    if(!sprintf(s, muoto, l->str))
+      return 1;
+    l=l->seur;
+    s = s+strlen(s);
+  }
+  return 0;
+}
+
+strlista* _strlistaksi(char* s, const char* erotin) {
+  strlista* l = NULL;
+  char* ptr;
+  /*vaihdetaan merkki NULL:iksi,
+    kopioidaan merkkijono,
+    edistetään s:ää,
+    vaihdetaan merkki takaisin*/
+  while( (ptr = strstr(s, erotin)) ) {
+    *ptr = '\0';
+    l = _strlisaa_kopioiden(l, s);
+    s += strlen(s) + strlen(erotin);
+    *ptr = *erotin;
+  }
+  /*viimeinen ei pääty erottimeen*/
+  l = _strlisaa_kopioiden(l,s);
+  return l;
+}
+
+strlista* _strlisaa_kopioiden(strlista* l, char* str) {
+  l = _yjatka(l);
+  l->str = malloc(strlen(str)+1);
+  strcpy(l->str, str);
+  return l;
+}
+
+strlista* _strlisaa_kopioiden_taakse(strlista* l, char* str) {
+  l = _yjatka_taakse(l);
+  l->str = malloc(strlen(str)+1);
+  strcpy(l->str, str);
+  return l;
+}
+
+strlista* _strnouda(strlista* l, int i) {
+  return (strlista*)_ynouda(l, i);
+}
+
+strlista* _strkopioi(strlista* vanha, int n) {
+  strlista *uusi = NULL;
+  while(vanha && n--) {
+    uusi = _strlisaa_kopioiden(uusi, vanha->str);
+    vanha = vanha->seur;
+  }
+  return _yalkuun(uusi);
+}
+
+void _strpoista(strlista* l, int* nrot, int kpl) {
+  _ypoista(l, nrot, kpl, _strvapautus);
+}
+
+strlista* _strpoista_kaikki(strlista* l) {
+  _ypoista_kaikki(l, _strvapautus);
+  return NULL;
+}
+
+strlista* _strpoista1(strlista* l, char s) {
+  return (strlista*)_ypoista1(l, _strvapautus, s);
+}
+
+void _strvapautus(void* l) {
+  free(((strlista*)l)->str);
+}
+  
+  
+int oma_strvrt(char*, char*);
+int oma_strvrt1(char *a, char *b);
+
+/*Järjestää vaihtamalla vain p-pointterien osoitteet
+  Vaihtaa ensimmäisen paikalleen ja sitten rekursio seuraavasta alkaen*/
+void _strjarjesta(strlista *l) {
+  if(!l) return;
+  strlista *alkumuisti  = l;
+  strlista *ensimmainen = l;
+  
+  while((l = l->seur))
+    if(oma_strvrt(l->str, ensimmainen->str) < 0)
+      ensimmainen = l;
+
+  char *apu        = ensimmainen->str;
+  ensimmainen->str = alkumuisti->str;
+  alkumuisti ->str = apu;
+  
+  _strjarjesta(alkumuisti->seur);
+}
+
+int oma_strvrt(char *a, char *b) {
+  /*Laitetaan isot ja pienet kirjaimet limittäin
+    AaBbCc ... ÅåÄäÖö. En ole vielä lisännyt ääkkösiä tähän*/
+  int vrt = 0;
+  while (*a && *b && !(vrt = oma_strvrt1(a++, b++)));
+  return vrt;
+}
+
+int oma_strvrt1(char *a, char *b) {
+  double aa, bb;
+  /*Ensin yritetään verrata lukuina*/
+  if ( sscanf(a, "%lf", &aa) && sscanf(b, "%lf", &bb) )
+    return aa - bb;
+  /*Ja sitten kirjaimina*/
+  aa = *a;
+  bb = *b;
+  if (*a >= 'A' && *a <= 'Z')
+    aa = *a + ('a' - 'A') - 0.5;
+  if (*b >= 'A' && *b <= 'Z')
+    bb = *b + ('a' - 'A') - 0.5;
+  return (aa - bb) * 2;
+}
