@@ -52,14 +52,14 @@ strlista* _strlistaksi(char* s, const char* erotin) {
   return l;
 }
 
-strlista* _strlisaa_kopioiden(strlista* l, char* str) {
+strlista* _strlisaa_kopioiden(strlista* l, const char* str) {
   l = _yjatka(l);
   l->str = malloc(strlen(str)+1);
   strcpy(l->str, str);
   return l;
 }
 
-strlista* _strlisaa_kopioiden_taakse(strlista* l, char* str) {
+strlista* _strlisaa_kopioiden_taakse(strlista* l, const char* str) {
   l = _yjatka_taakse(l);
   l->str = malloc(strlen(str)+1);
   strcpy(l->str, str);
