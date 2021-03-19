@@ -85,8 +85,8 @@ strlista* _strkopioi(void* vanhav, int n) {
   return _yalkuun(uusi);
 }
 
-void _strpoista(void* l, int* nrot, int kpl) {
-  _ypoista(l, nrot, kpl, _strvapautus);
+strlista* _strpoista(void* l, int* nrot, int kpl) {
+  return _ypoista(l, nrot, kpl, _strvapautus);
 }
 
 strlista* _strpoista_kaikki(void* l) {

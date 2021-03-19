@@ -19,7 +19,7 @@ strlista* _strlisaa_kopioiden_taakse(void* l, const char* str);
 strlista* _strlistaksi(char* s, const char* erotin);
 strlista* _strnouda(void*, int);
 strlista* _strkopioi(void*, int n);
-void      _strpoista(void*, int*, int);
+strlista* _strpoista(void*, int*, int);
 strlista* _strpoista1(void*, char);
 strlista* _strpoista_kaikki(void*);
 void      _strjarjesta(void*);
