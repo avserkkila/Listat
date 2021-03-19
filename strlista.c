@@ -4,27 +4,30 @@
 #include "strlista.h"
 #include "ylista.h"
 
-void _strtulosta(strlista* l) {
+void _strtulosta(void* l) {
   _ytulosta(l, "%s\n");
 }
 
-void _strtulosta_valein(strlista* l) {
+void _strtulosta_valein(void* lv) {
+  strlista* l = lv;
   printf("%s",l->str);
   _ytulosta(l->seur, " %s");
   puts("");
 }
 
-void _strftulosta(FILE *f, strlista* l) {
+void _strftulosta(FILE *f, void* l) {
   _yftulosta(f, l, "%s\n");
 }
 
-void _strftulosta_valein(FILE *f, strlista* l) {
+void _strftulosta_valein(FILE *f, void* lv) {
+  strlista *l = lv;
   fprintf(f, "%s",l->str);
   _yftulosta(f, l->seur, " %s");
   fputc('\n', f);
 }
 
-char _strstulostaf(char* s, char* muoto, strlista* l) {
+char _strstulostaf(char* s, char* muoto, void* lv) {
+  strlista *l = lv;
   while(l) {
     if(!sprintf(s, muoto, l->str))
       return 1;
@@ -52,25 +55,28 @@ strlista* _strlistaksi(char* s, const char* erotin) {
   return l;
 }
 
-strlista* _strlisaa_kopioiden(strlista* l, const char* str) {
+strlista* _strlisaa_kopioiden(void* lv, const char* str) {
+  strlista* l = lv;
   l = _yjatka(l);
   l->str = malloc(strlen(str)+1);
   strcpy(l->str, str);
   return l;
 }
 
-strlista* _strlisaa_kopioiden_taakse(strlista* l, const char* str) {
+strlista* _strlisaa_kopioiden_taakse(void* lv, const char* str) {
+  strlista* l = lv;
   l = _yjatka_taakse(l);
   l->str = malloc(strlen(str)+1);
   strcpy(l->str, str);
   return l;
 }
 
-strlista* _strnouda(strlista* l, int i) {
+strlista* _strnouda(void* l, int i) {
   return (strlista*)_ynouda(l, i);
 }
 
-strlista* _strkopioi(strlista* vanha, int n) {
+strlista* _strkopioi(void* vanhav, int n) {
+  strlista *vanha = vanhav;
   strlista *uusi = NULL;
   while(vanha && n--) {
     uusi = _strlisaa_kopioiden(uusi, vanha->str);
@@ -79,16 +85,16 @@ strlista* _strkopioi(strlista* vanha, int n) {
   return _yalkuun(uusi);
 }
 
-void _strpoista(strlista* l, int* nrot, int kpl) {
+void _strpoista(void* l, int* nrot, int kpl) {
   _ypoista(l, nrot, kpl, _strvapautus);
 }
 
-strlista* _strpoista_kaikki(strlista* l) {
+strlista* _strpoista_kaikki(void* l) {
   _ypoista_kaikki(l, _strvapautus);
   return NULL;
 }
 
-strlista* _strpoista1(strlista* l, char s) {
+strlista* _strpoista1(void* l, char s) {
   return (strlista*)_ypoista1(l, _strvapautus, s);
 }
 
@@ -102,8 +108,9 @@ int oma_strvrt1(char *a, char *b);
 
 /*Järjestää vaihtamalla vain p-pointterien osoitteet
   Vaihtaa ensimmäisen paikalleen ja sitten rekursio seuraavasta alkaen*/
-void _strjarjesta(strlista *l) {
-  if(!l) return;
+void _strjarjesta(void* lv) {
+  if(!lv) return;
+  strlista *l = lv;
   strlista *alkumuisti  = l;
   strlista *ensimmainen = l;
   

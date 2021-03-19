@@ -9,18 +9,18 @@ typedef struct strlista_s {
 #endif
 #define _strlista_h_
 
-void      _strtulosta(strlista*);
-void      _strtulosta_valein(strlista*);
-void      _strftulosta(FILE*, strlista*);
-void      _strftulosta_valein(FILE*, strlista*);
-char      _strstulostaf(char* s, char* muoto, strlista* l);
-strlista* _strlisaa_kopioiden(strlista* l, const char* str);
-strlista* _strlisaa_kopioiden_taakse(strlista* l, const char* str);
+void      _strtulosta(void*);
+void      _strtulosta_valein(void*);
+void      _strftulosta(FILE*, void*);
+void      _strftulosta_valein(FILE*, void*);
+char      _strstulostaf(char* s, char* muoto, void* l);
+strlista* _strlisaa_kopioiden(void* l, const char* str);
+strlista* _strlisaa_kopioiden_taakse(void* l, const char* str);
 strlista* _strlistaksi(char* s, const char* erotin);
-strlista* _strnouda(strlista*, int);
-strlista* _strkopioi(strlista*, int n);
-void      _strpoista(strlista*, int*, int);
-strlista* _strpoista1(strlista*, char);
-strlista* _strpoista_kaikki(strlista*);
-void      _strjarjesta(strlista*);
+strlista* _strnouda(void*, int);
+strlista* _strkopioi(void*, int n);
+void      _strpoista(void*, int*, int);
+strlista* _strpoista1(void*, char);
+strlista* _strpoista_kaikki(void*);
+void      _strjarjesta(void*);
 void      _strvapautus(void*);
