@@ -172,6 +172,22 @@ void* _ypoista(void* vl, int* nrot, int kpl, void (*vapautus)(void*)) {
   return l;
 }
 
+/*palauttaa ensimmäisen, jota ei poistettu*/
+void* _ypoista_maski(void* vl, char* maski, void (*vapautus)(void*)) {
+  ylista* l = (ylista*)vl;
+  ylista* r = l;
+  int i=0;
+  while(l)
+    if(maski[i]) {
+      if(r == l)
+	r = l->seur;
+      l = _ypoista1(l, vapautus, 1);
+    }
+    else
+      l = l->seur;
+  return r;
+}
+
 void* _yrm(void* lv, int* nrot, int kpl) {
   return _ypoista((ylista*)lv, nrot, kpl, tuhja);
 }
@@ -184,8 +200,8 @@ void _yrma(void* pv) {
   _ypoista_kaikki((ylista*)pv, tuhja);
 }
 
-/*Poistaa annetun jäsenen ja palauttaa seuraavan*/
-void* _ypoista1(void* vptr, void (*vapautus)(void*), char s) {
+/*Poistaa annetun jäsenen ja palauttaa seuraavan (s>=0) tai edellisen (s<0)*/
+void* _ypoista1(void* vptr, void (*vapautus)(void*), int s) {
   if(!vptr)
     return NULL;
   ylista* ptr = (ylista*)vptr;
