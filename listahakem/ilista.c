@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "ilista.h"
-#include "/home/antterkk/c/ylista.h"
+#include "ylista.h"
 
 ilista* _iuusi_lista() {
   ilista* l = malloc(sizeof(ilista));

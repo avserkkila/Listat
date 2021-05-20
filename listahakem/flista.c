@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "flista.h"
-#include "/home/antterkk/c/ylista.h"
+#include "ylista.h"
 
 flista* _fuusi_lista() {
   flista* l = malloc(sizeof(flista));
