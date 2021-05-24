@@ -31,6 +31,7 @@ void* _yloppuun(void*);
 int   _ylaske(void*);
 int   _ylaske_taakse(void*);
 int   _yind(void*);
+void* _yjarjestapit(void* l, int* j, int pit);
 void  _ytulosta(void* lista, char* muoto);
 void  _yftulosta(FILE *f, void* lista, char* muoto);
 void  _ytulostaf(void*, char* muoto, int x);

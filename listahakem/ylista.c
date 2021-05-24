@@ -5,6 +5,8 @@
 #include "ilista.h"
 #include "flista.h"
 
+#define L ((ylista*)l)
+
 void tuhja(void*);
 
 void* _yuusi_lista() {
@@ -222,6 +224,19 @@ void* _ypoista1(void* vptr, void (*vapautus)(void*), int s) {
 void _ypoista_kaikki(void* vptr, void (*vapautus)(void*)) {
   while(vptr)
     vptr = _ypoista1(vptr, vapautus, 1);
+}
+
+void* _yjarjestapit(void* l, int* j, int pit) {
+  void **a = malloc(pit*sizeof(void*));
+  void* l0 = l;
+  for(int i=0; i<pit; i++)
+    a[i] = ((ylista*)_ynouda(l, j[i]))->p;
+  for(int i=0; i<pit; i++) {
+    L->p = a[i];
+    l = L->seur;
+  }
+  free(a);
+  return l0;
 }
 
 /*Näitä tulostusjuttuja ei kannata käyttää.

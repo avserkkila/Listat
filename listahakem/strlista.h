@@ -17,6 +17,7 @@ char      _strstulostaf(char* s, char* muoto, void* l);
 strlista* _strlisaa_kopioiden(void* l, const char* str);
 strlista* _strlisaa_kopioiden_taakse(void* l, const char* str);
 strlista* _strlistaksi(char* s, const char* erotin);
+strlista* _strpilko_sanoiksi(char* s);
 strlista* _strnouda(void*, int);
 strlista* _strkopioi(void*, int n);
 strlista* _strpoista(void*, int*, int);

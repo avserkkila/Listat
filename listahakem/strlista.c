@@ -55,6 +55,20 @@ strlista* _strlistaksi(char* s, const char* erotin) {
   return l;
 }
 
+strlista* _strpilko_sanoiksi(char* s) {
+  strlista *l = NULL;
+  FILE *stream = fmemopen(s, strlen(s), "r");
+  if(!stream) return NULL;
+  char *sana = malloc(strlen(s)+1);
+  while(!feof(stream)) {
+    fscanf(stream, "%s", sana);
+    l = _strlisaa_kopioiden(l, sana);
+  }
+  free(sana);
+  fclose(stream);
+  return _yalkuun(l);
+}
+
 strlista* _strlisaa_kopioiden(void* lv, const char* str) {
   strlista* l = lv;
   l = _yjatka(l);
