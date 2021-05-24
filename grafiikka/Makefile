@@ -6,3 +6,4 @@ tekstigrafiikka: tekstigraf.c tekstigraf.h
 	gcc -g -c -Wall tekstigraf.c ${incdir} ${libdir} ${libs}
 	ar rcs libtekstigraf.a tekstigraf.o
 	rm tekstigraf.o
+	mv libtekstigraf.a ../kirjastot

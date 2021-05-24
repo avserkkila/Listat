@@ -1,12 +1,12 @@
 #ifndef __TEKSTIGRAFIIKKA__
 #define __TEKSTIGRAFIIKKA__
 #include <strlista.h>
-#include <SDL.h>
-#include <SDL_ttf.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 typedef struct {
   char* teksti;
-  strlista* tkstil;
+  strlista* lista;
   char ttflaji; //mitä ttf-kirjaston funktiota käytetään (katso laita_teksti_ttf())
   TTF_Font* font;
   int fonttikoko;
@@ -15,6 +15,7 @@ typedef struct {
   SDL_Rect* toteutuma; //mikä tila oikeasti käytetään
   SDL_Color vari;
   short alku; //koskee vain listoja, ensimmäisen näytetyn indeksi, 'r'
+  char lopusta; //laitetaanko lista lopusta vai alusta
   short rullaus; //koskee vain listoja, 'w'
   char numerointi; //koskee vain listoja;
 } tekstiolio_s;
@@ -28,4 +29,5 @@ int laita_pari_oikealle(tekstiolio_s* ov, int vali,		\
 			tekstiolio_s* o, SDL_Renderer* rend);
 void laita_vierekkain(strlista* a, strlista* b, int alku, tekstiolio_s* o, SDL_Renderer* r);
 void laita_oikealle(tekstiolio_s* ov, short vali, strlista* l, int alku, tekstiolio_s* o, SDL_Renderer* r);
+void laita_alle(tekstiolio_s* yll, int vali, strlista* l, tekstiolio_s* o, SDL_Renderer* r);
 void laita_teksti_ttf_vasemmalle(tekstiolio_s* ov, short vali, tekstiolio_s* o, SDL_Renderer* r);

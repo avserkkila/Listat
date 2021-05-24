@@ -8,6 +8,8 @@
 float skaala = 1.0;
 
 void laita_teksti_ttf(tekstiolio_s *o, SDL_Renderer *rend) {
+  if(!strcmp(o->teksti, ""))
+    return;
   SDL_Surface *pinta;
   switch(o->ttflaji) {
   case 0:
@@ -152,6 +154,13 @@ void laita_oikealle(tekstiolio_s* ov, short vali, strlista* l, int alku, tekstio
   laita_tekstilista(l, alku, o, r);
   o->sij->x = vanha_x;
   return;
+}
+
+void laita_alle(tekstiolio_s* yll, int vali, strlista* l, tekstiolio_s* o, SDL_Renderer* r) {
+  int uusi_y = yll->toteutuma->y + yll->toteutuma->h + vali;
+  o->sij->y = uusi_y;
+  o->sij->x = yll->toteutuma->x;
+  laita_tekstilista(l, o->lopusta, o, r);
 }
 
 void laita_teksti_ttf_vasemmalle(tekstiolio_s* ov, short vali, tekstiolio_s* o, SDL_Renderer* r) {
