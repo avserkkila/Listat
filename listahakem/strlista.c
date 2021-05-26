@@ -37,35 +37,32 @@ char _strstulostaf(char* s, char* muoto, void* lv) {
   return 0;
 }
 
-strlista* _strlistaksi(char* s, const char* erotin) {
+strlista* _strlistaksi(const char* s, const char* restrict erotin) {
+  char* str = strdup(s);
+  char* str0 = str;
   strlista* l = NULL;
   char* ptr;
-  /*vaihdetaan merkki NULL:iksi,
-    kopioidaan merkkijono,
-    edistetään s:ää,
-    vaihdetaan merkki takaisin*/
-  while( (ptr = strstr(s, erotin)) ) {
+  while( (ptr = strstr(str, erotin)) ) {
     *ptr = '\0';
-    l = _strlisaa_kopioiden(l, s);
-    s += strlen(s) + strlen(erotin);
-    *ptr = *erotin;
+    l = _strlisaa_kopioiden(l, str);
+    str += strlen(str) + strlen(erotin);
   }
   /*viimeinen ei pääty erottimeen*/
-  l = _strlisaa_kopioiden(l,s);
+  l = _strlisaa_kopioiden(l,str);
+  free(str0);
   return l;
 }
 
-strlista* _strpilko_sanoiksi(char* s) {
+strlista* _strpilko_sanoiksi(const char* restrict s) {
   strlista *l = NULL;
-  FILE *stream = fmemopen(s, strlen(s), "r");
-  if(!stream) return NULL;
   char *sana = malloc(strlen(s)+1);
-  while(!feof(stream)) {
-    fscanf(stream, "%s", sana);
+  while(sscanf(s, "%s", sana) > 0) {
     l = _strlisaa_kopioiden(l, sana);
+    while(s[0] != sana[0])
+      s++;
+    s += strlen(sana);
   }
   free(sana);
-  fclose(stream);
   return _yalkuun(l);
 }
 
