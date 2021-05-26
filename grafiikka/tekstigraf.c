@@ -30,8 +30,8 @@ void laita_teksti_ttf(tekstiolio_s *o, SDL_Renderer *rend) {
     fprintf(stderr, "Virhe tekstin luomisessa: %s\n", TTF_GetError());
     return;
   }
-  SDL_Texture *ttuuri = SDL_CreateTextureFromSurface(rend, pinta);
-  if(!ttuuri)
+  o->ttuurit = _ylisaa(o->ttuurit, SDL_CreateTextureFromSurface(rend, pinta));
+  if(!o->ttuurit->p)
     fprintf(stderr, "Virhe tekstuurin luomisessa: %s\n", SDL_GetError());
 
   /*kuvan koko on luodun pinnan koko, mutta enintään objektille määritelty koko
@@ -44,15 +44,15 @@ void laita_teksti_ttf(tekstiolio_s *o, SDL_Renderer *rend) {
   o->toteutuma->w *= skaala;
   o->toteutuma->h *= skaala;
 
-  SDL_Rect osa = (SDL_Rect){(pinta->w < o->sij->w)? 0 : pinta->w - o->toteutuma->w, \
-			    (pinta->h < o->sij->h)? 0 : pinta->h - o->toteutuma->h, \
-			    pinta->w,					\
-			    pinta->h};
-
-  SDL_RenderFillRect(rend, o->toteutuma);
-  SDL_RenderCopy(rend, ttuuri, &osa, o->toteutuma);
+  o->osat = _ylisaa(o->osat, malloc(sizeof(SDL_Rect)));
+  o->totmat = _ylisaa(o->totmat, malloc(sizeof(SDL_Rect)));
+  *(SDL_Rect*)(o->osat->p) = (SDL_Rect){(pinta->w < o->sij->w)? 0 : pinta->w - o->toteutuma->w, \
+					(pinta->h < o->sij->h)? 0 : pinta->h - o->toteutuma->h, \
+					pinta->w,			\
+					pinta->h};
+  *(SDL_Rect*)(o->totmat->p) = *(o->toteutuma);
+  
   SDL_FreeSurface(pinta);
-  SDL_DestroyTexture(ttuuri);
   return;
 }
 
@@ -215,4 +215,14 @@ void laita_teksti_ttf_vasemmalle(tekstiolio_s* ov, short vali, tekstiolio_s* o, 
   SDL_FreeSurface(pinta);
   SDL_DestroyTexture(ttuuri);
   return;
+}
+
+void ttuurivapautus(void* l) {
+  SDL_DestroyTexture((SDL_Texture*)( (*(ylista*)l).p ));
+}
+
+void poista_ttuurit(tekstiolio_s* o) {
+  o->osat = _strpoista_kaikki(_yalkuun(o->osat));
+  o->totmat = _strpoista_kaikki(_yalkuun(o->totmat));
+  o->ttuurit = _ypoista_kaikki(_yalkuun(o->ttuurit), ttuurivapautus);
 }

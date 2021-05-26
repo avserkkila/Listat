@@ -18,6 +18,9 @@ typedef struct {
   char lopusta; //laitetaanko lista lopusta vai alusta
   short rullaus; //koskee vain listoja, 'w'
   char numerointi; //koskee vain listoja;
+  ylista *ttuurit; //osoitin olkoon listan lopussa
+  ylista *osat; //osoitin olkoon listan lopussa; lista suorakulmioista
+  ylista *totmat; //toteutumat
 } tekstiolio_s;
 
 #endif
@@ -31,3 +34,5 @@ void laita_vierekkain(strlista* a, strlista* b, int alku, tekstiolio_s* o, SDL_R
 void laita_oikealle(tekstiolio_s* ov, short vali, strlista* l, int alku, tekstiolio_s* o, SDL_Renderer* r);
 void laita_alle(tekstiolio_s* yll, int vali, strlista* l, tekstiolio_s* o, SDL_Renderer* r);
 void laita_teksti_ttf_vasemmalle(tekstiolio_s* ov, short vali, tekstiolio_s* o, SDL_Renderer* r);
+void ttuurivapautus(void* l);
+void poista_ttuurit(tekstiolio_s*);
