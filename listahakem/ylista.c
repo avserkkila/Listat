@@ -221,9 +221,10 @@ void* _ypoista1(void* vptr, void (*vapautus)(void*), int s) {
   return r;
 }
 
-void _ypoista_kaikki(void* vptr, void (*vapautus)(void*)) {
+void* _ypoista_kaikki(void* vptr, void (*vapautus)(void*)) {
   while(vptr)
     vptr = _ypoista1(vptr, vapautus, 1);
+  return NULL;
 }
 
 void* _yjarjestapit(void* l, int* j, int pit) {

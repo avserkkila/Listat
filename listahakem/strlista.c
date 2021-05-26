@@ -100,7 +100,7 @@ strlista* _strpoista(void* l, int* nrot, int kpl) {
   return _ypoista(l, nrot, kpl, _strvapautus);
 }
 
-strlista* _strpoista_kaikki(void* l) {
+void* _strpoista_kaikki(void* l) {
   _ypoista_kaikki(l, _strvapautus);
   return NULL;
 }

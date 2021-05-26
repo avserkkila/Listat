@@ -22,7 +22,7 @@ void* _ynoudaf(void* lv, int nro, int alku);
 void* _ypoista(void*, int*, int, void (*f)(void*));
 void* _ypoista_maski(void* vl, char* maski, void (*vapautus)(void*));
 void* _ypoista1(void*, void (*f)(void*), int);
-void  _ypoista_kaikki(void* ptr, void (*f)(void*));
+void* _ypoista_kaikki(void* ptr, void (*f)(void*));
 void* _yrm(void*, int*, int);
 void* _yrm1(void* j, char);
 void  _yrma(void*);

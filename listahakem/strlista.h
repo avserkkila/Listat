@@ -22,6 +22,6 @@ strlista* _strnouda(void*, int);
 strlista* _strkopioi(void*, int n);
 strlista* _strpoista(void*, int*, int);
 strlista* _strpoista1(void*, char);
-strlista* _strpoista_kaikki(void*);
+void*     _strpoista_kaikki(void*);
 void      _strjarjesta(void*);
 void      _strvapautus(void*);
