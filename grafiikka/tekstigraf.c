@@ -8,7 +8,7 @@
 float skaala = 1.0;
 
 void laita_teksti_ttf(tekstiolio_s *o, SDL_Renderer *rend) {
-  if(!strcmp(o->teksti, ""))
+  if(!o->teksti || !strcmp(o->teksti, ""))
     return;
   SDL_Surface *pinta;
   switch(o->ttflaji) {
@@ -164,10 +164,10 @@ void laita_alle(tekstiolio_s* yll, int vali, strlista* l, tekstiolio_s* o, SDL_R
 }
 
 void laita_teksti_ttf_vasemmalle(tekstiolio_s* ov, short vali, tekstiolio_s* o, SDL_Renderer* r) {
-  if(!strcmp(o->teksti, ""))
-    return;
   if(!o)
     o = ov;
+  if(!o->teksti || !strcmp(o->teksti, ""))
+    return;
   SDL_Surface *pinta;
   switch(o->ttflaji) {
   case 0:
