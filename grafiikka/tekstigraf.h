@@ -11,8 +11,8 @@ typedef struct {
   TTF_Font* font;
   int fonttikoko;
   char* fonttied;
-  SDL_Rect* sij; //tälle varattu maksimitila
-  SDL_Rect* toteutuma; //mikä tila oikeasti käytetään
+  SDL_Rect sij; //tälle varattu maksimitila
+  SDL_Rect toteutuma; //mikä tila oikeasti käytetään
   SDL_Color vari;
   short alku; //koskee vain listoja, ensimmäisen näytetyn indeksi, 'r'
   char lopusta; //laitetaanko lista lopusta vai alusta
