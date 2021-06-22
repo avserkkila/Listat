@@ -10,7 +10,7 @@ listat:
 	mv liblistat.a ../kirjastot
 
 lista_math:
-	gcc -g -c -Wall lista_math.c ${listasrc}
+	gcc -g -c -Wall lista_math.c ${listasrc} -lm
 	ar rcs liblista_math.a lista_math.o ${listao}
 	rm ${listao} lista_math.o
 	mv liblista_math.a ../kirjastot

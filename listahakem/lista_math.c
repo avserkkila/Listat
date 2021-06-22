@@ -156,11 +156,65 @@ floatint floatmin(flista* l, int n) {
 
 /*j:hin tulostetaan järjestys, joka luotiin.
   j:n paikalle voi antaa NULL:in, jolloin järjestystä ei tulosteta*/
+
+ilista* int_lomitusjarj(ilista* l) {
+  int_lomitusjarj_pit(l, _ylaske(l));
+  return l;
+}
+
+/*lomitusjärjestäminen (merge sort), jossa pituus annetaan argumenttina,
+  optimoinnin vuoksi palauttaa viimeisen jäsenen*/
+ilista* int_lomitusjarj_pit(ilista* l0, unsigned n) {
+  if(n <= 1)
+    return l0;
+  /*puolikkaitten järjestäminen*/
+  unsigned raja = n>>1; // n/2
+  ilista* l[2];
+  l[0] = l0;
+  l[1] = int_lomitusjarj_pit(l0, raja)->seur;
+  ilista* viimeinen = int_lomitusjarj_pit(l[1], n-raja);
+  
+  int* muisti = malloc(n*sizeof(int));
+  int id=0;
+  int pienempi;
+  
+  /*katkaistaan viimeisistä linkit seuraaviin*/
+  ilista* viimeinen_seur = viimeinen->seur;
+  viimeinen->seur = NULL;
+  l[1]->edel->seur = NULL;
+  ilista* l1_alussa = l[1];
+  /*lomitus*/
+  while(1) {
+    pienempi = l[1]->i < l[0]->i;
+    muisti[id++] = l[pienempi]->i;
+    if(!l[pienempi]->seur)
+      break;
+    l[pienempi] = l[pienempi]->seur;
+  }
+  /*kopioidaan loput*/
+  ilista* juoksu = l[!pienempi];
+  while(juoksu) {
+    muisti[id++] = juoksu->i;
+    juoksu = juoksu->seur;
+  }
+  /*palautetaan linkit seuraaviin*/
+  viimeinen->seur = viimeinen_seur;
+  l1_alussa->edel->seur = l1_alussa;
+  /*kopioidaan taulukko takaisin listaan*/
+  for(int tmp=0; tmp<id; tmp++) {
+    l0->i = muisti[tmp];
+    l0 = l0->seur;
+  }
+  free(muisti);
+  return viimeinen;
+}
+
 void intjarjesta(ilista* l, int2 fun(ilista*, int), int* j, int n) {
   int2 m;
-  int apu = _ylaske(l);
+  int apu;
+  int pit = _ylaske(l);
   if(j)
-    for(int i=0; i<apu; i++)
+    for(int i=0; i<pit && n-i; i++)
       j[i] = i;
   while(l && n--) {
     m = fun(l, n);
@@ -175,6 +229,58 @@ void intjarjesta(ilista* l, int2 fun(ilista*, int), int* j, int n) {
     }
   }
   return;
+}
+
+flista* float_lomitusjarj(flista* l0) {
+  float_lomitusjarj_pit(l0, _ylaske(l0));
+  return l0;
+}
+
+/*lomitusjärjestäminen (merge sort), jossa pituus annetaan argumenttina,
+  optimointisyistä palauttaa viimeisen jäsenen*/
+flista* float_lomitusjarj_pit(flista* l0, unsigned n) {
+  if(n <= 1)
+    return l0;
+  /*puolikkaitten järjestäminen*/
+  unsigned raja = n>>1; // n/2
+  flista* l[2];
+  l[0] = l0;
+  l[1] = float_lomitusjarj_pit(l0, raja)->seur;
+  flista* viimeinen = float_lomitusjarj_pit(l[1], n-raja);
+  
+  float* muisti = malloc(n*sizeof(float));
+  int id=0;
+  int pienempi;
+  
+  /*katkaistaan viimeisistä linkit seuraaviin*/
+  flista* viimeinen_seur = viimeinen->seur;
+  viimeinen->seur = NULL;
+  l[1]->edel->seur = NULL;
+  flista* l1_alussa = l[1];
+  /*lomitus*/
+  while(1) {
+    pienempi = l[1]->f < l[0]->f; //branchless programming
+    muisti[id++] = l[pienempi]->f;
+    if(!l[pienempi]->seur)
+      break;
+    l[pienempi] = l[pienempi]->seur;
+  }
+  /*kopioidaan loput*/
+  flista* juoksu = l[!pienempi];
+  while(juoksu) {
+    muisti[id++] = juoksu->f;
+    juoksu = juoksu->seur;
+  }
+  /*palautetaan linkit seuraaviin*/
+  viimeinen->seur = viimeinen_seur;
+  l1_alussa->edel->seur = l1_alussa;
+  /*kopioidaan taulukko takaisin listaan*/
+  for(int tmp=0; tmp<id; tmp++) {
+    l0->f = muisti[tmp];
+    l0 = l0->seur;
+  }
+  free(muisti);
+  return viimeinen;
 }
 
 flista* floatjarjesta(flista* l, floatint fun(flista*, int), int* j, int n) {

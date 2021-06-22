@@ -8,6 +8,7 @@ typedef struct ilista_s {
 
 ilista* _iuusi_lista();
 ilista* _ilisaa(ilista*, int);
+ilista* _ilisaa_taakse(ilista*, int);
 void    _itulosta(ilista*, int n);
 ilista* _ikopioi(ilista*, int n);
 
