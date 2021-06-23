@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <omp.h>
 #include "lista_math.h"
 #include <math.h>
 #include "listat.h"
@@ -154,25 +155,50 @@ floatint floatmin(flista* l, int n) {
   return (floatint){min, minind};
 }
 
-/*j:hin tulostetaan järjestys, joka luotiin.
-  j:n paikalle voi antaa NULL:in, jolloin järjestystä ei tulosteta*/
-
 ilista* int_lomitusjarj(ilista* l) {
   int_lomitusjarj_pit(l, _ylaske(l));
   return l;
 }
 
-/*lomitusjärjestäminen (merge sort), jossa pituus annetaan argumenttina,
-  optimoinnin vuoksi palauttaa viimeisen jäsenen*/
+/*lomitusjärjestäminen (merge sort), jossa pituus annetaan argumenttina*/
 ilista* int_lomitusjarj_pit(ilista* l0, unsigned n) {
-  if(n <= 1)
+  if(n < 2)
     return l0;
+  int_lomitusjarj_pit_yli1(l0, n);
+  return l0;
+}
+
+/*optimoinnin vuoksi palauttaa viimeisen jäsenen
+  ja pituuden ollessa enintään 3 käyttää stooge-lajittelua*/
+
+ilista* int_lomitusjarj_pit_yli1(ilista* l0, unsigned n) {
+  if(n <= 3) {
+    ilista* l1 = l0->seur;
+    int iarr[] = {l0->i, l1->i};
+    int pienempi = iarr[1] < iarr[0];
+    l0->i = iarr[pienempi];
+    l1->i = iarr[!pienempi];
+    if(n==2)
+      return l1;
+    ilista* l2 = l1->seur;
+    iarr[0] = l1->i; iarr[1] = l2->i;
+    pienempi = iarr[1] < iarr[0];
+    l1->i = iarr[pienempi];
+    l2->i = iarr[!pienempi];
+    
+    iarr[0] = l0->i; iarr[1] = l2->i;
+    pienempi = iarr[1] < iarr[0];
+    l0->i = iarr[pienempi];
+    l1->i = iarr[!pienempi];
+    return l2;
+  }
+  
   /*puolikkaitten järjestäminen*/
   unsigned raja = n>>1; // n/2
   ilista* l[2];
   l[0] = l0;
-  l[1] = int_lomitusjarj_pit(l0, raja)->seur;
-  ilista* viimeinen = int_lomitusjarj_pit(l[1], n-raja);
+  l[1] = int_lomitusjarj_pit_yli1(l0, raja)->seur;
+  ilista* viimeinen = int_lomitusjarj_pit_yli1(l[1], n-raja);
   
   int* muisti = malloc(n*sizeof(int));
   int id=0;
@@ -209,6 +235,9 @@ ilista* int_lomitusjarj_pit(ilista* l0, unsigned n) {
   return viimeinen;
 }
 
+/*ERITTÄIN hidas valintalajittelu
+  j:hin tulostetaan järjestys, joka luotiin.
+  j:n paikalle voi antaa NULL:in, jolloin järjestystä ei tulosteta*/
 void intjarjesta(ilista* l, int2 fun(ilista*, int), int* j, int n) {
   int2 m;
   int apu;
@@ -231,22 +260,49 @@ void intjarjesta(ilista* l, int2 fun(ilista*, int), int* j, int n) {
   return;
 }
 
-flista* float_lomitusjarj(flista* l0) {
-  float_lomitusjarj_pit(l0, _ylaske(l0));
+flista* float_lomitusjarj(flista* l) {
+  float_lomitusjarj_pit(l, _ylaske(l));
+  return l;
+}
+
+/*lomituslajittelu (merge sort), jossa pituus annetaan argumenttina*/
+flista* float_lomitusjarj_pit(flista* l0, unsigned n) {
+  if(n < 2)
+    return l0;
+  float_lomitusjarj_pit_yli1(l0, n);
   return l0;
 }
 
-/*lomitusjärjestäminen (merge sort), jossa pituus annetaan argumenttina,
-  optimointisyistä palauttaa viimeisen jäsenen*/
-flista* float_lomitusjarj_pit(flista* l0, unsigned n) {
-  if(n <= 1)
-    return l0;
+/*optimoinnin vuoksi palauttaa viimeisen jäsenen
+  ja pituuden ollessa enintään 3 käyttää stooge-lajittelua*/
+flista* float_lomitusjarj_pit_yli1(flista* l0, unsigned n) {
+  if(n <= 3) {
+    flista* l1 = l0->seur;
+    float arr[] = {l0->f, l1->f};
+    int pienempi = arr[1] < arr[0];
+    l0->f = arr[pienempi];
+    l1->f = arr[!pienempi];
+    if(n==2)
+      return l1;
+    flista* l2 = l1->seur;
+    arr[0] = l1->f; arr[1] = l2->f;
+    pienempi = arr[1] < arr[0];
+    l1->f = arr[pienempi];
+    l2->f = arr[!pienempi];
+    
+    arr[0] = l0->f; arr[1] = l2->f;
+    pienempi = arr[1] < arr[0];
+    l0->f = arr[pienempi];
+    l1->f = arr[!pienempi];
+    return l2;
+  }
+  
   /*puolikkaitten järjestäminen*/
   unsigned raja = n>>1; // n/2
   flista* l[2];
   l[0] = l0;
-  l[1] = float_lomitusjarj_pit(l0, raja)->seur;
-  flista* viimeinen = float_lomitusjarj_pit(l[1], n-raja);
+  l[1] = float_lomitusjarj_pit_yli1(l0, raja)->seur;
+  flista* viimeinen = float_lomitusjarj_pit_yli1(l[1], n-raja);
   
   float* muisti = malloc(n*sizeof(float));
   int id=0;
@@ -259,7 +315,7 @@ flista* float_lomitusjarj_pit(flista* l0, unsigned n) {
   flista* l1_alussa = l[1];
   /*lomitus*/
   while(1) {
-    pienempi = l[1]->f < l[0]->f; //branchless programming
+    pienempi = l[1]->f < l[0]->f;
     muisti[id++] = l[pienempi]->f;
     if(!l[pienempi]->seur)
       break;

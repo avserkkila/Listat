@@ -20,6 +20,7 @@ int2 intmin(ilista* l, int);
 void intjarjesta(ilista*, int2 fun(ilista*, int), int* j, int);
 ilista* int_lomitusjarj(ilista* l);
 ilista* int_lomitusjarj_pit(ilista*, unsigned);
+ilista* int_lomitusjarj_pit_yli1(ilista*, unsigned);
 ilista* intlistalle (ilista*, int, int, int, int);
 
 double floatsumma(flista*, int);
@@ -31,6 +32,7 @@ floatint floatmin(flista* l, int);
 flista* floatjarjesta(flista*, floatint fun(flista*, int), int* j, int);
 flista* float_lomitusjarj(flista* l0);
 flista* float_lomitusjarj_pit(flista* l0, unsigned n);
+flista* float_lomitusjarj_pit_yli1(flista* l0, unsigned n);
 flista* floatmovavg(flista* l, int mv, int mo, int pv, int po, int);
 float floatavg(flista* l, int mv, int mo, int pv, int po);
 flista* floatlistalle(flista* l, int mv, int mo, int pp, int ps);
