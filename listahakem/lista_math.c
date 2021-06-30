@@ -5,7 +5,7 @@
 #include "listat.h"
 #include <string.h>
 
-/*kaikissa voi antaa arvon n,
+/*useimmissa voi antaa arvon n,
   jonka täyttyessä toimintoa ei enää suoriteta*/
 
 int intsumma(ilista* l, int n) {
@@ -186,7 +186,7 @@ ilista* int_lomitusjarj_pit_yli1(ilista* l0, unsigned n) {
     l1->i = iarr[pienempi];
     l2->i = iarr[!pienempi];
     
-    iarr[0] = l0->i; iarr[1] = l2->i;
+    iarr[0] = l0->i; iarr[1] = l1->i;
     pienempi = iarr[1] < iarr[0];
     l0->i = iarr[pienempi];
     l1->i = iarr[!pienempi];
@@ -234,6 +234,99 @@ ilista* int_lomitusjarj_pit_yli1(ilista* l0, unsigned n) {
   free(muisti);
   return viimeinen;
 }
+
+/*kuin int_lomitusjarj_pit, mutta taulukkoon taul laittaa syntyneen järjestyksen*/
+ilista* int_lomitusjarj_pit_jarj(ilista* l0, unsigned* taul, unsigned n) {
+  for(unsigned i=0; i<n; i++)
+    taul[i] = i;
+  if(n < 2)
+    return l0;
+  int_lomitusjarj_pit_jarj_yli1(l0, taul, n);
+  return l0;
+}
+
+ilista* int_lomitusjarj_pit_jarj_yli1(ilista* l0, unsigned* taul, unsigned n) {
+  if(n <= 3) {
+    ilista* l1 = l0->seur;
+    int iarr[] = {l0->i, l1->i};
+    int pienempi = iarr[1] < iarr[0];
+    l0->i = iarr[pienempi];
+    l1->i = iarr[!pienempi];
+    int taularr[] = {taul[0], taul[1]};
+    taul[0] = taularr[pienempi];
+    taul[1] = taularr[!pienempi];
+    if(n==2)
+      return l1;
+    ilista* l2 = l1->seur;
+    iarr[0] = l1->i; iarr[1] = l2->i;
+    pienempi = iarr[1] < iarr[0];
+    l1->i = iarr[pienempi];
+    l2->i = iarr[!pienempi];
+    taularr[0] = taul[1]; taularr[1] = taul[2];
+    taul[1] = taularr[pienempi];
+    taul[2] = taularr[!pienempi];
+
+    iarr[0] = l0->i; iarr[1] = l1->i;
+    pienempi = iarr[1] < iarr[0];
+    l0->i = iarr[pienempi];
+    l1->i = iarr[!pienempi];
+    taularr[0] = taul[0]; taularr[1] = taul[1];
+    taul[0] = taularr[pienempi];
+    taul[1] = taularr[!pienempi];
+    return l2;
+  }
+  
+  /*puolikkaitten järjestäminen*/
+  unsigned raja = n>>1; // n/2
+  ilista* l[2];
+  l[0] = l0;
+  l[1] = int_lomitusjarj_pit_jarj_yli1(l0, taul, raja)->seur;
+  ilista* viimeinen = int_lomitusjarj_pit_jarj_yli1(l[1], taul+raja, n-raja);
+
+  int* muisti = malloc(n*sizeof(int));
+  int id=0; int pienempi;
+  unsigned* muistitaul = malloc(n*sizeof(unsigned));
+  for(int i=0; i<n; i++)
+    muistitaul[i] = taul[i];
+  unsigned* t[] = {muistitaul, muistitaul+raja};
+
+  /*katkaistaan viimeisistä linkit seuraaviin*/
+  ilista* viimeinen_seur = viimeinen->seur;
+  viimeinen->seur = NULL;
+  l[1]->edel->seur = NULL;
+  ilista* l1_alussa = l[1];
+  /*lomitus*/
+  while(1) {
+    pienempi = l[1]->i < l[0]->i;
+    muisti[id] = l[pienempi]->i;
+    taul[id++] = *t[pienempi];
+    if(!l[pienempi]->seur)
+      break;
+    l[pienempi] = l[pienempi]->seur;
+    t[pienempi]++;
+  }
+  /*kopioidaan loput*/
+  ilista* juoksu = l[!pienempi];
+  unsigned* ttmp = t[!pienempi];
+  while(juoksu) {
+    muisti[id] = juoksu->i;
+    taul[id++] = *ttmp++;
+    juoksu = juoksu->seur;
+  }
+  /*palautetaan linkit seuraaviin*/
+  viimeinen->seur = viimeinen_seur;
+  l1_alussa->edel->seur = l1_alussa;
+  /*kopioidaan taulukko takaisin listaan*/
+  for(int tmp=0; tmp<id; tmp++) {
+    l0->i = muisti[tmp];
+    l0 = l0->seur;
+  }
+  free(muisti);
+  free(muistitaul);
+
+  return viimeinen;
+}
+    
 
 /*ERITTÄIN hidas valintalajittelu
   j:hin tulostetaan järjestys, joka luotiin.
@@ -290,7 +383,7 @@ flista* float_lomitusjarj_pit_yli1(flista* l0, unsigned n) {
     l1->f = arr[pienempi];
     l2->f = arr[!pienempi];
     
-    arr[0] = l0->f; arr[1] = l2->f;
+    arr[0] = l0->f; arr[1] = l1->f;
     pienempi = arr[1] < arr[0];
     l0->f = arr[pienempi];
     l1->f = arr[!pienempi];

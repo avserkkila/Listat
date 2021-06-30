@@ -21,6 +21,8 @@ void intjarjesta(ilista*, int2 fun(ilista*, int), int* j, int);
 ilista* int_lomitusjarj(ilista* l);
 ilista* int_lomitusjarj_pit(ilista*, unsigned);
 ilista* int_lomitusjarj_pit_yli1(ilista*, unsigned);
+ilista* int_lomitusjarj_pit_jarj(ilista* l0, unsigned* taul, unsigned n);
+ilista* int_lomitusjarj_pit_jarj_yli1(ilista* l0, unsigned* taul, unsigned n);
 ilista* intlistalle (ilista*, int, int, int, int);
 
 double floatsumma(flista*, int);
