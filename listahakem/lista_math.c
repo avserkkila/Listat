@@ -73,16 +73,16 @@ floatint floatmed(flista* fl, int n) {
     r.b = 0;
     return r;
   }
-  int* ind = malloc(pit * sizeof(int));
-  l = _yalkuun(floatjarjesta(l, floatmin, ind, -1));
+  unsigned* ind = malloc(pit * sizeof(unsigned));
+  l = float_lomitusjarj_jarj_pit(l, ind, pit);
   pit--;
   r.b = ind[pit / 2];
-  l = _ynouda(l, pit/2);
+  flista* l1 = _ynouda(l, pit/2);
   if( !(pit % 2) )
-    r.a = l->f;
+    r.a = l1->f;
   else
-    r.a = (l->f + l->seur->f) / 2;
-  _yrma(_yalkuun(l));
+    r.a = (l1->f + l1->seur->f) / 2;
+  _yrma(l);
   free(ind);
   return r;
 }
@@ -235,17 +235,21 @@ ilista* int_lomitusjarj_pit_yli1(ilista* l0, unsigned n) {
   return viimeinen;
 }
 
+ilista* int_lomitusjarj_jarj(ilista* l0, unsigned* taul) {
+  return int_lomitusjarj_jarj_pit(l0, taul, _ylaske(l0));
+}
+
 /*kuin int_lomitusjarj_pit, mutta taulukkoon taul laittaa syntyneen järjestyksen*/
-ilista* int_lomitusjarj_pit_jarj(ilista* l0, unsigned* taul, unsigned n) {
+ilista* int_lomitusjarj_jarj_pit(ilista* l0, unsigned* taul, unsigned n) {
   for(unsigned i=0; i<n; i++)
     taul[i] = i;
   if(n < 2)
     return l0;
-  int_lomitusjarj_pit_jarj_yli1(l0, taul, n);
+  int_lomitusjarj_jarj_pit_yli1(l0, taul, n);
   return l0;
 }
 
-ilista* int_lomitusjarj_pit_jarj_yli1(ilista* l0, unsigned* taul, unsigned n) {
+ilista* int_lomitusjarj_jarj_pit_yli1(ilista* l0, unsigned* taul, unsigned n) {
   if(n <= 3) {
     ilista* l1 = l0->seur;
     int iarr[] = {l0->i, l1->i};
@@ -280,8 +284,8 @@ ilista* int_lomitusjarj_pit_jarj_yli1(ilista* l0, unsigned* taul, unsigned n) {
   unsigned raja = n>>1; // n/2
   ilista* l[2];
   l[0] = l0;
-  l[1] = int_lomitusjarj_pit_jarj_yli1(l0, taul, raja)->seur;
-  ilista* viimeinen = int_lomitusjarj_pit_jarj_yli1(l[1], taul+raja, n-raja);
+  l[1] = int_lomitusjarj_jarj_pit_yli1(l0, taul, raja)->seur;
+  ilista* viimeinen = int_lomitusjarj_jarj_pit_yli1(l[1], taul+raja, n-raja);
 
   int* muisti = malloc(n*sizeof(int));
   int id=0; int pienempi;
@@ -296,15 +300,11 @@ ilista* int_lomitusjarj_pit_jarj_yli1(ilista* l0, unsigned* taul, unsigned n) {
   l[1]->edel->seur = NULL;
   ilista* l1_alussa = l[1];
   /*lomitus*/
-  while(1) {
+  do {
     pienempi = l[1]->i < l[0]->i;
     muisti[id] = l[pienempi]->i;
-    taul[id++] = *t[pienempi];
-    if(!l[pienempi]->seur)
-      break;
-    l[pienempi] = l[pienempi]->seur;
-    t[pienempi]++;
-  }
+    taul[id++] = *t[pienempi]++;
+  } while((l[pienempi] = l[pienempi]->seur));
   /*kopioidaan loput*/
   ilista* juoksu = l[!pienempi];
   unsigned* ttmp = t[!pienempi];
@@ -326,7 +326,6 @@ ilista* int_lomitusjarj_pit_jarj_yli1(ilista* l0, unsigned* taul, unsigned n) {
 
   return viimeinen;
 }
-    
 
 /*ERITTÄIN hidas valintalajittelu
   j:hin tulostetaan järjestys, joka luotiin.
@@ -429,6 +428,98 @@ flista* float_lomitusjarj_pit_yli1(flista* l0, unsigned n) {
     l0 = l0->seur;
   }
   free(muisti);
+  return viimeinen;
+}
+
+flista* float_lomitusjarj_jarj(flista* l0, unsigned *taul) {
+  return float_lomitusjarj_jarj_pit(l0, taul, _ylaske(l0));
+}
+
+/*kuin float_lomitusjarj_pit, mutta taulukkoon taul laittaa syntyneen järjestyksen*/
+flista* float_lomitusjarj_jarj_pit(flista* l0, unsigned* taul, unsigned n) {
+  for(unsigned i=0; i<n; i++)
+    taul[i] = i;
+  if(n < 2)
+    return l0;
+  float_lomitusjarj_jarj_pit_yli1(l0, taul, n);
+  return l0;
+}
+
+flista* float_lomitusjarj_jarj_pit_yli1(flista* l0, unsigned* taul, unsigned n) {
+  if(n <= 3) {
+    flista* l1 = l0->seur;
+    float iarr[] = {l0->f, l1->f};
+    int pienempi = iarr[1] < iarr[0];
+    l0->f = iarr[pienempi];
+    l1->f = iarr[!pienempi];
+    int taularr[] = {taul[0], taul[1]};
+    taul[0] = taularr[pienempi];
+    taul[1] = taularr[!pienempi];
+    if(n==2)
+      return l1;
+    flista* l2 = l1->seur;
+    iarr[0] = l1->f; iarr[1] = l2->f;
+    pienempi = iarr[1] < iarr[0];
+    l1->f = iarr[pienempi];
+    l2->f = iarr[!pienempi];
+    taularr[0] = taul[1]; taularr[1] = taul[2];
+    taul[1] = taularr[pienempi];
+    taul[2] = taularr[!pienempi];
+
+    iarr[0] = l0->f; iarr[1] = l1->f;
+    pienempi = iarr[1] < iarr[0];
+    l0->f = iarr[pienempi];
+    l1->f = iarr[!pienempi];
+    taularr[0] = taul[0]; taularr[1] = taul[1];
+    taul[0] = taularr[pienempi];
+    taul[1] = taularr[!pienempi];
+    return l2;
+  }
+  
+  /*puolikkaitten järjestäminen*/
+  unsigned raja = n>>1; // n/2
+  flista* l[2];
+  l[0] = l0;
+  l[1] = float_lomitusjarj_jarj_pit_yli1(l0, taul, raja)->seur;
+  flista* viimeinen = float_lomitusjarj_jarj_pit_yli1(l[1], taul+raja, n-raja);
+
+  float* muisti = malloc(n*sizeof(float));
+  int id=0; int pienempi;
+  unsigned* muistitaul = malloc(n*sizeof(unsigned));
+  for(int i=0; i<n; i++)
+    muistitaul[i] = taul[i];
+  unsigned* t[] = {muistitaul, muistitaul+raja};
+
+  /*katkaistaan viimeisistä linkit seuraaviin*/
+  flista* viimeinen_seur = viimeinen->seur;
+  viimeinen->seur = NULL;
+  l[1]->edel->seur = NULL;
+  flista* l1_alussa = l[1];
+  /*lomitus*/
+  do {
+    pienempi = l[1]->f < l[0]->f;
+    muisti[id] = l[pienempi]->f;
+    taul[id++] = *t[pienempi]++;
+  } while((l[pienempi] = l[pienempi]->seur));
+  /*kopioidaan loput*/
+  flista* juoksu = l[!pienempi];
+  unsigned* ttmp = t[!pienempi];
+  while(juoksu) {
+    muisti[id] = juoksu->f;
+    taul[id++] = *ttmp++;
+    juoksu = juoksu->seur;
+  }
+  /*palautetaan linkit seuraaviin*/
+  viimeinen->seur = viimeinen_seur;
+  l1_alussa->edel->seur = l1_alussa;
+  /*kopioidaan taulukko takaisin listaan*/
+  for(int tmp=0; tmp<id; tmp++) {
+    l0->f = muisti[tmp];
+    l0 = l0->seur;
+  }
+  free(muisti);
+  free(muistitaul);
+
   return viimeinen;
 }
 
