@@ -5,6 +5,7 @@ typedef struct flista_s {
   float f;
   struct flista_s *seur;
 } flista;
+#endif
 
 flista* _fuusi_lista();
 flista* _fjatka(flista*);
@@ -13,5 +14,4 @@ flista* _flisaa(flista*, float);
 flista* _flisaa_taakse(flista*, float);
 void    _ftulosta(flista*, const char* muoto, int);
 flista* _fkopioi(flista*, int);
-
-#endif
+flista* _fkopioi_palauta_alku(flista*, int);

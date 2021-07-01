@@ -222,8 +222,13 @@ void* _ypoista1(void* vptr, void (*vapautus)(void*), int s) {
 }
 
 void* _ypoista_kaikki(void* vptr, void (*vapautus)(void*)) {
-  while(vptr)
+  if(!vptr)
+    return NULL;
+  if( ((ylista*)vptr)->edel )
+    ((ylista*)vptr)->edel->seur = NULL;
+  do
     vptr = _ypoista1(vptr, vapautus, 1);
+  while(vptr);
   return NULL;
 }
 

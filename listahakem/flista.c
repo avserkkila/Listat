@@ -46,3 +46,16 @@ flista* _fkopioi(flista *l, int n) {
   }
   return uusi;
 }
+
+flista* _fkopioi_palauta_alku(flista *l, int n) {
+  flista *uusi = NULL;
+  if(l)
+    uusi = _flisaa(uusi, l->f);
+  l = l->seur;
+  flista *juoksu = uusi;
+  while(l && n--) {
+    juoksu = _flisaa(juoksu, l->f);
+    l = l->seur;
+  }
+  return uusi;
+}
